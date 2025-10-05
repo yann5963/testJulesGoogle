@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG avec Flask</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Application RAG simple</h1>
+
+    <div class="container">
+        <h2>1. Téléverser des fichiers PDF</h2>
+        <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="files[]" multiple accept=".pdf">
+            <button type="submit">Téléverser et Traiter</button>
+        </form>
+        <div id="upload-status"></div>
+    </div>
+
+    <div class="container">
+        <h2>2. Poser une question</h2>
+        <form id="query-form">
+            <input type="text" id="question" placeholder="Votre question...">
+            <button type="submit">Envoyer</button>
+        </form>
+        <div id="response">
+            <h3>Réponse :</h3>
+            <p id="answer"></p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

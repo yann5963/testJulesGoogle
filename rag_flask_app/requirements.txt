@@ -1,0 +1,7 @@
+flask
+unstructured[pdf]
+chromadb
+ollama
+requests
+langchain
+langchain-community
