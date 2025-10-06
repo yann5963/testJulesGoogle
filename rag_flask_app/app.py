@@ -8,8 +8,11 @@ from langchain.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 # Import des classes de LLM
-from langchain_community.chat_models import ChatOllama
-from langchain_community.chat_models.openrouter import ChatOpenRouter
+#from langchain_community.chat_models import ChatOllama
+from langchain_openai import ChatOpenAI
+# Gestion des variables d'environnement
+from dotenv import load_dotenv
+import pathlib
 
 # --- Configuration de l'application Flask ---
 app = Flask(__name__)
@@ -24,25 +27,31 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 # Assurez-vous que le modèle est disponible dans Ollama : `ollama pull nomic-embed-text`
 embeddings = OllamaEmbeddings(model="nomic-embed-text")
 
-# 2. Modèle de chat (LLM) pour la génération de réponses
-# Par défaut, nous utilisons un modèle local via Ollama pour un fonctionnement immédiat.
-# Assurez-vous qu'Ollama est en cours d'exécution.
-llm = ChatOllama(model="gemma:2b")
-
-# --- (Optionnel) Configuration pour OpenRouter ---
-# Pour utiliser un modèle plus puissant via OpenRouter, commentez la ligne `llm` ci-dessus
-# et décommentez les lignes ci-dessous. N'oubliez pas de définir votre clé API.
-#
+# 2. Modèle de chat via OpenRouter
 # OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
-# if not OPENROUTER_API_KEY:
-#     print("AVERTISSEMENT: La variable d'environnement OPENROUTER_API_KEY n'est pas définie ou est vide.")
-#     # Optionnel : vous pouvez choisir de stopper l'application ou d'utiliser le modèle local par défaut
-#     # Ici, nous continuons avec une clé vide, ce qui provoquera une erreur si l'utilisateur essaie de l'utiliser.
-#
-# llm = ChatOpenRouter(
-#     model_name="meta-llama/llama-3-8b-instruct", # Vous pouvez choisir n'importe quel modèle sur OpenRouter
-#     openrouter_api_key=OPENROUTER_API_KEY
-# )
+# Définir le chemin vers le fichier .env à la racine du projet
+current_dir = pathlib.Path(__file__).parent.absolute()
+env_path = current_dir / '.env'
+print(f"Chemin du fichier .env : {env_path}")
+
+# Charger les variables d'environnement depuis le fichier .env
+load_dotenv(dotenv_path=env_path)
+
+# Récupérer la clé
+OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
+print(f"Clé OPENROUTER_API_KEY chargée : {'Oui' if OPENROUTER_API_KEY else 'Non'}")
+
+if not OPENROUTER_API_KEY:
+     print("AVERTISSEMENT: La variable d'environnement OPENROUTER_API_KEY n'est pas définie ou est vide. Veuillez définir cette variable dans le fichier .env pour utiliser OpenRouter.")
+     # Optionnel : vous pouvez choisir de stopper l'application ou d'utiliser le modèle local par défaut
+     # Ici, nous continuons avec une clé vide, ce qui provoquera une erreur si l'utilisateur essaie de l'utiliser.
+     exit(1)
+
+llm = ChatOpenAI(
+    model="openai/gpt-oss-20b:free",
+    openai_api_key=OPENROUTER_API_KEY,
+    openai_api_base="https://openrouter.ai/api/v1"
+)
 
 # --- Variables globales pour le stockage des données ---
 vectorstore = None
