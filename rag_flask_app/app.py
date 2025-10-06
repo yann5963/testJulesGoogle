@@ -18,8 +18,9 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 # --- Configuration des modèles ---
 
 # 1. Modèle d'embedding local avec Ollama
-# Assurez-vous que le modèle gemma:2b est disponible dans Ollama : `ollama pull gemma:2b`
-embeddings = OllamaEmbeddings(model="gemma:2b")
+# J'utilise nomic-embed-text, un modèle spécialisé pour la création d'embeddings.
+# Assurez-vous que le modèle est disponible dans Ollama : `ollama pull nomic-embed-text`
+embeddings = OllamaEmbeddings(model="nomic-embed-text")
 
 # 2. Modèle de chat (LLM) pour la génération de réponses
 # Par défaut, nous utilisons un modèle local via Ollama pour un fonctionnement immédiat.

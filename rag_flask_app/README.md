@@ -13,10 +13,14 @@ Cette application web permet de téléverser des documents PDF, de poser des que
 ## Prérequis
 
 1.  **Python 3.8+** : Assurez-vous que Python et `pip` sont installés.
-2.  **Ollama** : Vous devez installer Ollama et télécharger le modèle `gemma:2b`.
+2.  **Ollama** : Vous devez installer Ollama et télécharger les modèles nécessaires.
     - [Télécharger Ollama](https://ollama.com/)
-    - Après l'installation, exécutez la commande suivante dans votre terminal pour télécharger le modèle :
+    - Après l'installation, exécutez les commandes suivantes dans votre terminal pour télécharger les modèles :
       ```bash
+      # Modèle pour la génération d'embeddings
+      ollama pull nomic-embed-text
+
+      # Modèle pour la génération de réponses
       ollama pull gemma:2b
       ```
 3.  **(Optionnel) Clé API OpenRouter** : Si vous souhaitez utiliser un modèle d'OpenRouter (comme Llama 3) au lieu du `gemma:2b` local pour la génération de réponses, vous aurez besoin d'une clé API.
