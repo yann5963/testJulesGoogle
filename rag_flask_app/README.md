@@ -74,19 +74,19 @@ Par défaut, l'application utilise `gemma:2b` via Ollama pour générer les rép
 1.  **Obtenez une clé API** sur [OpenRouter.ai](https://openrouter.ai/).
 
 2.  **Modifiez `app.py` :**
-    - Commentez la ligne qui initialise le LLM local `gemma:2b` dans le bloc `if __name__ == '__main__':`.
-    - Décommentez les lignes de configuration du LLM pour OpenRouter en haut du fichier.
-    - Remplacez `"VOTRE_CLÉ_API_OPENROUTER"` par votre clé réelle ou, mieux encore, utilisez une variable d'environnement :
-      ```python
-      # Au début du fichier app.py
-      # import os
-      # from dotenv import load_dotenv
-      # load_dotenv() # charge les variables depuis un fichier .env
+    - Dans la section `--- (Optionnel) Configuration pour OpenRouter ---`, commentez la ligne `llm = ChatOllama(model="gemma:2b")`.
+    - Décommentez le bloc de code pour `ChatOpenRouter`.
+    - Assurez-vous que votre clé API est définie dans une variable d'environnement nommée `OPENROUTER_API_KEY`.
 
-      llm = ChatOllama(
-          model="meta-llama/llama-3-8b-instruct", # ou un autre modèle
-          base_url="https://openrouter.ai/api/v1",
-          api_key=os.environ.get("OPENROUTER_API_KEY")
-      )
+      Le code à décommenter ressemble à ceci :
+      ```python
+      # OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
+      # if not OPENROUTER_API_KEY:
+      #     print("AVERTISSEMENT: La variable d'environnement OPENROUTER_API_KEY n'est pas définie ou est vide.")
+      #
+      # llm = ChatOpenRouter(
+      #     model_name="meta-llama/llama-3-8b-instruct", # Modèle de votre choix
+      #     openrouter_api_key=OPENROUTER_API_KEY
+      # )
       ```
 3.  Relancez l'application.

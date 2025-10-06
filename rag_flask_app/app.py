@@ -7,7 +7,9 @@ from langchain_community.vectorstores import Chroma
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
+# Import des classes de LLM
 from langchain_community.chat_models import ChatOllama
+from langchain_community.chat_models.openrouter import ChatOpenRouter
 
 # --- Configuration de l'application Flask ---
 app = Flask(__name__)
@@ -33,12 +35,13 @@ llm = ChatOllama(model="gemma:2b")
 #
 # OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 # if not OPENROUTER_API_KEY:
-#     print("AVERTISSEMENT: La variable d'environnement OPENROUTER_API_KEY n'est pas définie.")
+#     print("AVERTISSEMENT: La variable d'environnement OPENROUTER_API_KEY n'est pas définie ou est vide.")
+#     # Optionnel : vous pouvez choisir de stopper l'application ou d'utiliser le modèle local par défaut
+#     # Ici, nous continuons avec une clé vide, ce qui provoquera une erreur si l'utilisateur essaie de l'utiliser.
 #
-# llm = ChatOllama(
-#     model="meta-llama/llama-3-8b-instruct",
-#     base_url="https://openrouter.ai/api/v1",
-#     api_key=OPENROUTER_API_KEY
+# llm = ChatOpenRouter(
+#     model_name="meta-llama/llama-3-8b-instruct", # Vous pouvez choisir n'importe quel modèle sur OpenRouter
+#     openrouter_api_key=OPENROUTER_API_KEY
 # )
 
 # --- Variables globales pour le stockage des données ---
@@ -118,9 +121,12 @@ def query():
         | StrOutputParser()
     )
 
-    answer = rag_chain.invoke(question)
-
-    return jsonify({"answer": answer})
+    try:
+        answer = rag_chain.invoke(question)
+        return jsonify({"answer": answer})
+    except Exception as e:
+        # Capturer les erreurs d'API (par exemple, clé API incorrecte)
+        return jsonify({"error": f"Erreur lors de l'appel au LLM : {e}"}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
