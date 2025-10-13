@@ -5,4 +5,13 @@ ollama
 requests
 langchain
 langchain-community
+langchain-openai
 langchain-openrouter
+langchain-ollama  # Version moderne pour OllamaEmbeddings
+python-dotenv
+pathlib
+secrets
+logging
+functools
+typing
+werkzeug

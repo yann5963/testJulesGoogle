@@ -3,30 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAG avec Flask</title>
+    <title>Application RAG Avancée</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Application RAG simple</h1>
-
     <div class="container">
-        <h2>1. Téléverser des fichiers PDF</h2>
-        <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
-            <input type="file" name="files[]" multiple accept=".pdf">
-            <button type="submit">Téléverser et Traiter</button>
-        </form>
-        <div id="upload-status"></div>
+        <header class="app-header">
+            <h1><i class="fas fa-robot"></i> Application RAG Avancée</h1>
+            <div class="status-bar">
+                <span id="doc-count" class="status-item">
+                    <i class="fas fa-file-pdf"></i> Documents: {{ doc_count or 0 }}
+                </span>
+                <span id="system-status" class="status-item">
+                    <i class="fas fa-circle" style="color: #28a745;"></i> Système: Actif
+                </span>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Section de téléversement -->
+            <div class="section upload-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-upload"></i> 1. Téléverser des fichiers PDF</h2>
+                    <div class="section-actions">
+                        <button id="clear-btn" class="btn btn-secondary" style="display: none;">
+                            <i class="fas fa-trash"></i> Tout effacer
+                        </button>
+                        <button id="status-btn" class="btn btn-info">
+                            <i class="fas fa-info-circle"></i> Statut
+                        </button>
+                    </div>
+                </div>
+                
+                <form id="upload-form" class="upload-form">
+                    <div class="file-input-container">
+                        <input type="file" id="file-input" name="files[]" multiple accept=".pdf" required>
+                        <label for="file-input" class="file-input-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Choisir des fichiers PDF...</span>
+                            <small>ou glisser-déposer ici</small>
+                        </label>
+                    </div>
+                    <div id="file-list" class="file-list"></div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-cogs"></i> Traiter les fichiers
+                    </button>
+                </form>
+                
+                <div id="upload-status" class="status-message"></div>
+            </div>
+
+            <!-- Section de requête -->
+            <div class="section query-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-question-circle"></i> 2. Poser une question</h2>
+                    <div class="section-actions">
+                        <button id="history-btn" class="btn btn-secondary">
+                            <i class="fas fa-history"></i> Historique
+                        </button>
+                    </div>
+                </div>
+                
+                <form id="query-form" class="query-form">
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            id="question" 
+                            placeholder="Posez votre question sur les documents téléversés..."
+                            required
+                            maxlength="1000"
+                        >
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Envoyer
+                        </button>
+                    </div>
+                </form>
+                
+                <div id="response-container" class="response-container" style="display: none;">
+                    <div class="response-header">
+                        <h3><i class="fas fa-reply"></i> Réponse :</h3>
+                        <button id="copy-answer" class="btn btn-sm" title="Copier la réponse">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    <div id="answer" class="answer-box"></div>
+                </div>
+            </div>
+
+            <!-- Section d'historique -->
+            <div id="history-section" class="section history-section" style="display: none;">
+                <div class="section-header">
+                    <h2><i class="fas fa-history"></i> Historique des requêtes</h2>
+                    <button id="close-history" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Fermer
+                    </button>
+                </div>
+                <div id="history-list" class="history-list"></div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>&copy; 2024 Application RAG Avancée | Version 1.0.0</p>
+        </footer>
     </div>
 
-    <div class="container">
-        <h2>2. Poser une question</h2>
-        <form id="query-form">
-            <input type="text" id="question" placeholder="Votre question...">
-            <button type="submit">Envoyer</button>
-        </form>
-        <div id="response">
-            <h3>Réponse :</h3>
-            <p id="answer"></p>
+    <!-- Modale de chargement -->
+    <div id="loading-modal" class="modal">
+        <div class="modal-content">
+            <div class="spinner"></div>
+            <p id="loading-message">Traitement en cours...</p>
+        </div>
+    </div>
+
+    <!-- Modale d'erreur -->
+    <div id="error-modal" class="modal">
+        <div class="modal-content error-content">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Erreur</h3>
+            <p id="error-message"></p>
+            <button id="close-error" class="btn btn-primary">OK</button>
         </div>
     </div>
 

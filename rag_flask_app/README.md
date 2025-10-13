@@ -1,92 +1,245 @@
-# Application RAG simple avec Flask, Ollama et ChromaDB
+# Application RAG Avancée
 
-Cette application web permet de téléverser des documents PDF, de poser des questions sur leur contenu et d'obtenir des réponses générées par un grand modèle de langage (LLM). Elle utilise une approche RAG (Retrieval-Augmented Generation).
+Une application web Flask moderne pour la Recherche Augmentée par Génération (RAG) avec interface utilisateur intuitive et fonctionnalités avancées.
 
-## Fonctionnalités
+## 🚀 Fonctionnalités
 
-- **Interface Web Simple** : Téléversement de fichiers et dialogue via une interface web créée avec Flask.
-- **Traitement de PDF** : Extrait le texte de fichiers PDF en utilisant `unstructured`.
-- **Génération d'Embeddings Locale** : Crée des embeddings de vecteurs à partir du texte en utilisant le modèle `gemma:2b` via Ollama, s'exécutant localement.
-- **Stockage Vectoriel en Mémoire** : Stocke les embeddings dans une base de données ChromaDB en mémoire pour une recherche de similarité rapide.
-- **Génération de Réponses** : Utilise un LLM pour générer des réponses contextuelles basées sur les documents fournis.
+### ✨ Caractéristiques Principales
+- **Interface Web Moderne**: Design responsive avec expérience utilisateur optimisée
+- **Traitement de Documents PDF**: Extraction et analyse intelligente de contenu
+- **Recherche Sémantique**: Utilisation d'embeddings pour une recherche pertinente
+- **Gestion de Session**: Persistance des données et historique des requêtes
+- **Sécurité Renforcée**: Validation des entrées et gestion sécurisée des fichiers
+- **Logging Complet**: Surveillance détaillée de l'application
+- **Performance Optimisée**: Cache d'embeddings et paramètres optimisés
 
-## Prérequis
+### 🛠️ Fonctionnalités Techniques
+- **Architecture Modulaire**: Séparation claire des préoccupations
+- **Gestion d'Erreurs**: Gestion centralisée des erreurs avec messages utilisateur
+- **Validation Côté Client**: Validation des formulaires pour une meilleure UX
+- **Drag & Drop**: Téléversement intuitif des fichiers
+- **Historique des Requêtes**: Stockage et consultation des questions/réponses
+- **Statut en Temps Réel**: Monitoring du système et des documents chargés
 
-1.  **Python 3.8+** : Assurez-vous que Python et `pip` sont installés.
-2.  **Ollama** : Vous devez installer Ollama et télécharger les modèles nécessaires.
-    - [Télécharger Ollama](https://ollama.com/)
-    - Après l'installation, exécutez les commandes suivantes dans votre terminal pour télécharger les modèles :
-      ```bash
-      # Modèle pour la génération d'embeddings
-      ollama pull nomic-embed-text
+## 📁 Structure du Projet
 
-      # Modèle pour la génération de réponses
-      ollama pull gemma:2b
-      ```
-3.  **(Optionnel) Clé API OpenRouter** : Si vous souhaitez utiliser un modèle d'OpenRouter (comme Llama 3) au lieu du `gemma:2b` local pour la génération de réponses, vous aurez besoin d'une clé API.
+```
+rag_flask_app/
+├── app.py                 # Application Flask principale
+├── config.py             # Configuration centralisée
+├── document_manager.py   # Gestion des documents et embeddings
+├── utils.py              # Utilitaires et fonctions helpers
+├── requirements.txt      # Dépendances Python
+├── .env                  # Variables d'environnement
+├── .env_example         # Exemple de configuration
+├── templates/
+│   └── index.html        # Template principal
+├── static/
+│   ├── style.css         # Styles CSS
+│   └── script.js         # JavaScript interactif
+├── uploads/              # Dossier des fichiers uploadés
+├── chroma_db/            # Base de données vectorielle
+└── logs/                 # Fichiers de log
+```
 
-## Installation
+## 🛠️ Installation
 
-1.  **Clonez ou téléchargez le projet.**
+### Prérequis
+- Python 3.8+
+- Ollama installé avec le modèle `nomic-embed-text`
+- Clé API OpenRouter
 
-2.  **Naviguez dans le dossier du projet :**
-    ```bash
-    cd rag_flask_app
-    ```
+### Étapes d'Installation
 
-3.  **Créez un environnement virtuel (recommandé) :**
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # Sur Windows : venv\Scripts\activate
-    ```
+1. **Cloner le dépôt**
+```bash
+git clone <repository-url>
+cd rag_flask_app
+```
 
-4.  **Installez les dépendances :**
-    ```bash
-    pip install -r requirements.txt
-    ```
-    *Remarque : L'installation, en particulier pour `unstructured`, peut prendre plusieurs minutes.*
+2. **Créer l'environnement virtuel**
+```bash
+python -m venv venv
+source venv/bin/activate  # Sur Windows: venv\Scripts\activate
+```
 
-## Comment l'utiliser
+3. **Installer les dépendances**
+```bash
+pip install -r requirements.txt
+```
 
-1.  **Assurez-vous qu'Ollama est en cours d'exécution** avec le modèle `gemma:2b` disponible.
+4. **Configurer Ollama**
+```bash
+ollama pull nomic-embed-text
+```
 
-2.  **Lancez l'application Flask :**
-    ```bash
-    python app.py
-    ```
+5. **Configurer les variables d'environnement**
+```bash
+cp .env_example .env
+# Éditer .env avec votre clé API OpenRouter
+```
 
-3.  **Ouvrez votre navigateur** et allez à l'adresse `http://127.0.0.1:5001`.
+6. **Lancer l'application**
+```bash
+python app.py
+```
 
-4.  **Étape 1 : Téléverser des PDF**
-    - Cliquez sur "Choisir les fichiers" et sélectionnez un ou plusieurs documents PDF.
-    - Cliquez sur "Téléverser et Traiter".
-    - Attendez le message de confirmation. Le traitement peut prendre un certain temps en fonction de la taille des fichiers.
+L'application sera disponible à l'adresse: `http://localhost:5001`
 
-5.  **Étape 2 : Poser une question**
-    - Une fois les documents traités, tapez votre question dans le champ de saisie.
-    - Cliquez sur "Envoyer".
-    - La réponse générée par l'IA apparaîtra en dessous.
+## 🔧 Configuration
 
-## (Optionnel) Utiliser OpenRouter pour la génération de réponses
+### Variables d'Environnement (.env)
+```env
+OPENROUTER_API_KEY=votre_clé_api_openrouter
+SECRET_KEY=clé_secrète_aleatoire_optionnelle
+```
 
-Par défaut, l'application utilise `gemma:2b` via Ollama pour générer les réponses afin de fonctionner sans clé API. Pour utiliser un modèle plus puissant d'OpenRouter :
+### Paramètres Configurables (config.py)
+- `CHUNK_SIZE`: Taille des chunks de texte (1500 par défaut)
+- `CHUNK_OVERLAP`: Chevauchement des chunks (100 par défaut)
+- `RETRIEVE_K`: Nombre de documents à récupérer (5 par défaut)
+- `MAX_CONTENT_LENGTH`: Taille maximale des fichiers (16MB par défaut)
+- `EMBEDDING_MODEL`: Modèle d'embedding (nomic-embed-text par défaut)
+- `LLM_MODEL`: Modèle LLM (openai/gpt-oss-20b:free par défaut)
 
-1.  **Obtenez une clé API** sur [OpenRouter.ai](https://openrouter.ai/).
+## 📚 Utilisation
 
-2.  **Modifiez `app.py` :**
-    - Dans la section `--- (Optionnel) Configuration pour OpenRouter ---`, commentez la ligne `llm = ChatOllama(model="gemma:2b")`.
-    - Décommentez le bloc de code pour `ChatOpenRouter`.
-    - Assurez-vous que votre clé API est définie dans une variable d'environnement nommée `OPENROUTER_API_KEY`.
+### 1. Téléverser des Documents
+- Cliquez sur "Choisir des fichiers PDF" ou glissez-déposez les fichiers
+- Sélectionnez un ou plusieurs fichiers PDF
+- Cliquez sur "Traiter les fichiers"
 
-      Le code à décommenter ressemble à ceci :
-      ```python
-      # OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
-      # if not OPENROUTER_API_KEY:
-      #     print("AVERTISSEMENT: La variable d'environnement OPENROUTER_API_KEY n'est pas définie ou est vide.")
-      #
-      # llm = ChatOpenRouter(
-      #     model_name="meta-llama/llama-3-8b-instruct", # Modèle de votre choix
-      #     openrouter_api_key=OPENROUTER_API_KEY
-      # )
-      ```
-3.  Relancez l'application.
+### 2. Poser des Questions
+- Une fois les documents traités, entrez votre question
+- Cliquez sur "Envoyer" ou appuyez sur Entrée
+- La réponse s'affichera avec la source pertinente
+
+### 3. Fonctionnalités Avancées
+- **Historique**: Consultez vos requêtes précédentes
+- **Statut**: Vérifiez l'état du système
+- **Effacer**: Réinitialisez toute l'application
+- **Copier**: Copiez les réponses dans le presse-papiers
+
+## 🔍 API Endpoints
+
+### Endpoints Principaux
+- `GET /` - Page d'accueil
+- `POST /upload` - Téléverser et traiter des fichiers
+- `POST /query` - Poser une question
+- `GET /status` - Obtenir le statut du système
+- `POST /clear` - Réinitialiser le système
+- `GET /history` - Obtenir l'historique des requêtes
+- `GET /health` - Vérifier la santé de l'application
+
+### Format des Réponses
+Toutes les réponses API suivent un format standardisé:
+```json
+{
+  "success": true,
+  "data": {...},
+  "error": null,
+  "timestamp": "2024-01-01T00:00:00"
+}
+```
+
+## 🚀 Déploiement
+
+### Développement
+```bash
+python app.py
+```
+
+### Production
+Utilisez un serveur WSGI comme Gunicorn:
+```bash
+pip install gunicorn
+gunicorn -w 4 -b 0.0.0.0:5001 app:app
+```
+
+### Docker
+```dockerfile
+FROM python:3.9-slim
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY . .
+EXPOSE 5001
+
+CMD ["python", "app.py"]
+```
+
+## 📊 Performance et Optimisation
+
+### Caractéristiques d'Optimisation
+- **Cache d'Embeddings**: Évite les recalculs coûteux
+- **Chunking Optimisé**: Paramètres ajustés pour le meilleur équilibre
+- **Recherche MMR**: Maximal Marginal Relevance pour des résultats pertinents
+- **Logging Structuré**: Surveillance des performances
+- **Gestion de Mémoire**: Libération des ressources inutilisées
+
+### Bonnes Pratiques
+- Limiter le nombre de documents simultanés
+- Utiliser des fichiers de taille raisonnable (< 10MB)
+- Monitorer l'utilisation de la mémoire
+- Sauvegarder régulièrement la base de données
+
+## 🔐 Sécurité
+
+### Mesures de Sécurité
+- Validation des entrées côté serveur et client
+- Nettoyage des noms de fichiers
+- Limitation de la taille des uploads
+- Gestion sécurisée des clés API
+- Protection contre les injections
+
+## 🐛 Dépannage
+
+### Problèmes Courants
+
+1. **Erreur de clé API**
+   - Vérifiez que la clé OpenRouter est correcte dans `.env`
+   - Assurez-vous que le quota n'est pas dépassé
+
+2. **Problèmes d'embedding**
+   - Vérifiez qu'Ollama est en cours d'exécution
+   - Confirmez que le modèle `nomic-embed-text` est installé
+
+3. **Erreurs de mémoire**
+   - Réduisez la taille des fichiers
+   - Augmentez la taille de la swap si nécessaire
+   - Redémarrez l'application
+
+4. **Problèmes de performance**
+   - Vérifiez l'utilisation du CPU et de la mémoire
+   - Consultez les fichiers de log pour les erreurs
+
+### Logs
+Les logs sont disponibles dans le dossier `logs/`:
+- `rag_app.log`: Logs de l'application
+- Format structuré avec timestamps et niveaux de gravité
+
+## 🤝 Contribuer
+
+1. Fork le projet
+2. Créez une branche pour votre fonctionnalité
+3. Faites un commit de vos changements
+4. Poussez vers la branche
+5. Créez un Pull Request
+
+## 📄 Licence
+
+Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
+
+## 🙏 Remerciements
+
+- [LangChain](https://github.com/langchain-ai/langchain) pour le framework RAG
+- [ChromaDB](https://www.trychroma.com/) pour la base de données vectorielle
+- [Ollama](https://ollama.com/) pour l'inférence locale
+- [OpenRouter](https://openrouter.ai/) pour l'accès aux modèles avancés
+
+---
+
+**Version**: 1.0.0  
+**Dernière mise à jour**: 2024
