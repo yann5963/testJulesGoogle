@@ -36,6 +36,7 @@ function setupEventListeners() {
     
     // Boutons d'action
     document.getElementById('clear-btn').addEventListener('click', handleClear);
+    document.getElementById('effacer-btn').addEventListener('click', handleClear);
     document.getElementById('status-btn').addEventListener('click', handleStatus);
     document.getElementById('history-btn').addEventListener('click', handleHistory);
     document.getElementById('close-history').addEventListener('click', closeHistory);
