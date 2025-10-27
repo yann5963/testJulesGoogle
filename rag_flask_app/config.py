@@ -20,7 +20,7 @@ class Config:
     PERSIST_DIRECTORY.mkdir(exist_ok=True)
     
     # Configuration des modèles
-    EMBEDDING_MODEL = "nomic-embed-text"
+    EMBEDDING_MODEL = "nomic-embed-text:v1.5"
     LLM_MODEL = "openai/gpt-oss-20b:free"
     
     # Configuration du traitement de texte

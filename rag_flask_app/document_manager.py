@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import List, Optional
 from functools import lru_cache
 from langchain_community.document_loaders import UnstructuredFileLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 try:
     # Version moderne de langchain-ollama
     from langchain_ollama import OllamaEmbeddings
@@ -163,7 +163,7 @@ class DocumentManager:
             Réponse :
             """
             
-            from langchain.prompts import ChatPromptTemplate
+            from langchain_core.prompts import ChatPromptTemplate
             from langchain_core.runnables import RunnablePassthrough
             from langchain_core.output_parsers import StrOutputParser
             
