@@ -138,7 +138,7 @@ class DocumentManager:
         
         return False
     
-    def query(self, question: str) -> str:
+    def query(self, question: str, model_id: str = Config.DEFAULT_LLM) -> str:
         """Effectue une requête RAG"""
         if not self.retriever:
             raise ValueError("Aucun document n'a été chargé. Veuillez d'abord téléverser des documents.")
@@ -172,10 +172,14 @@ class DocumentManager:
             def format_docs(docs):
                 return "\n\n".join([f"Document {i+1}: {doc.page_content}" for i, doc in enumerate(docs)])
             
+            llm = self._get_llm(model_id)
+            if not llm:
+                raise ValueError(f"Modèle LLM non valide: {model_id}")
+
             rag_chain = (
                 {"context": self.retriever | format_docs, "question": RunnablePassthrough()}
                 | prompt
-                | self._get_llm()
+                | llm
                 | StrOutputParser()
             )
             
@@ -186,25 +190,34 @@ class DocumentManager:
             logger.error(f"Erreur lors de la requête RAG: {e}")
             raise
     
-    def _get_llm(self):
+    def _get_llm(self, model_id: str):
         """Récupère le LLM configuré"""
         from langchain_openai import ChatOpenAI
         from dotenv import load_dotenv
         import pathlib
         
+        model_config = Config.LLM_MODELS.get(model_id)
+        if not model_config:
+            logger.error(f"Configuration non trouvée pour le modèle: {model_id}")
+            return None
+
         # Charger les variables d'environnement
         current_dir = pathlib.Path(__file__).parent.absolute()
         env_path = current_dir / '.env'
         load_dotenv(dotenv_path=env_path)
         
-        api_key = os.getenv('OPENROUTER_API_KEY')
-        if not api_key:
-            raise ValueError("La clé API OpenRouter n'est pas configurée")
+        api_key = "ollama" # Pas de clé pour un ollama local
+        if model_id == "openrouter":
+            api_key = os.getenv('OPENROUTER_API_KEY')
+            if not api_key:
+                raise ValueError("La clé API OpenRouter n'est pas configurée")
         
         return ChatOpenAI(
-            model=Config.LLM_MODEL,
+            model=model_config["name"],
             openai_api_key=api_key,
-            openai_api_base=Config.OPENROUTER_API_BASE
+            openai_api_base=model_config["api_base"],
+            temperature=0.2,
+            max_tokens=500
         )
     
     def get_document_count(self) -> Optional[int]:

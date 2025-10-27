@@ -81,6 +81,13 @@
                             <i class="fas fa-paper-plane"></i> Envoyer
                         </button>
                     </div>
+                    <div class="model-selection">
+                        <label for="model-select">Modèle LLM:</label>
+                        <select id="model-select" class="custom-select">
+                            <option value="openrouter" selected>OpenRouter (Modèle gratuit)</option>
+                            <option value="ollama">Ollama (Llama3.2 local)</option>
+                        </select>
+                    </div>
                 </form>
                 
                 <div id="response-container" class="response-container" style="display: none;">
