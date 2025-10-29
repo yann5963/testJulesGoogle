@@ -21,7 +21,21 @@ class Config:
     
     # Configuration des modèles
     EMBEDDING_MODEL = "nomic-embed-text:v1.5"
-    LLM_MODEL = "openai/gpt-oss-20b:free"
+
+    # Modèles LLM disponibles
+    LLM_MODELS = {
+        "openrouter": {
+            "name": "openai/gpt-oss-20b:free",
+            "api_base": "https://openrouter.ai/api/v1"
+        },
+        "ollama": {
+            "name": "llama3.2:3b",
+            "api_base": "http://localhost:11434/v1"
+        }
+    }
+
+    # Modèle par défaut
+    DEFAULT_LLM = "openrouter"
     
     # Configuration du traitement de texte
     CHUNK_SIZE = 1500

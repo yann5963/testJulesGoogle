@@ -238,6 +238,8 @@ async function handleQuery(e) {
     
     const questionInput = document.getElementById('question');
     const question = questionInput.value.trim();
+    const modelSelect = document.getElementById('model-select');
+    const selectedModel = modelSelect.value;
     
     if (!question) {
         showError('Veuillez entrer une question.');
@@ -255,7 +257,10 @@ async function handleQuery(e) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ question: question })
+            body: JSON.stringify({
+                question: question,
+                model: selectedModel
+            })
         });
         
         console.log('Statut de la réponse:', response.status, response.statusText);

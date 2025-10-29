@@ -134,6 +134,7 @@ def query():
         return jsonify(create_error_response("La question est requise", 400))
     
     question = data['question'].strip()
+    model_id = data.get('model', Config.DEFAULT_LLM)
     
     # Valider la question
     if not Config.validate_question(question):
@@ -144,7 +145,7 @@ def query():
     
     try:
         # Effectuer la requête RAG
-        answer = document_manager.query(question)
+        answer = document_manager.query(question, model_id=model_id)
         
         # Stocker la requête dans l'historique de session
         history = session_manager.get('query_history', [])
